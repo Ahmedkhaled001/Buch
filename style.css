@@ -1,0 +1,51 @@
+body{
+    background-color: rgb(224, 255, 224);
+    height: 100vh;
+    width: 100%;
+}
+
+.nav-item:hover{
+    background-color: rgb(212, 211, 211);
+    border-radius: 10px;
+}
+.Profile-link{
+    text-decoration: none;
+}
+
+#logoutBtn{
+    display: none;
+}
+
+#addPostBtn{
+    height: 50px;
+    width: 50px;
+    color: white;
+    cursor: pointer;
+    font-size: 30px;
+    border-radius: 80px;
+    position: fixed;
+    bottom: 7%;
+    right: 5%;
+    text-align: center;
+    box-shadow: 0px 10px 10px rgb(0, 0, 0, 30%);
+
+
+}
+
+.form-control-post{
+    resize: none;
+    width: 465px;
+    height: 150px;
+    
+}
+
+.nav-user-img{
+    border-radius: 10px;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+}
+
+.nav-link{
+    padding-left: 20px;
+}
