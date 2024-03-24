@@ -49,3 +49,40 @@ body{
 .nav-link{
     padding-left: 20px;
 }
+
+/* body{
+    background: #f0ecff;
+} */
+
+.card {
+    margin-top: 30px;
+}
+
+#add-btn {
+    position: fixed;
+    bottom: 5%;
+    right: 7%;
+    height: 70px;
+    width: 70px;
+    font-size: 50px;
+    color: white;
+    border-radius: 100px;
+    /* line-height: 0; */
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0px 10px 10px rgba(0,0,0, 0.3);
+}
+
+.user-main-info{
+    font-weight: 500;
+    font-size: 20px;
+}
+.number-info {
+    color: rgb(172, 172, 172);
+    font-weight: 100;
+}
+
+.number-info span {
+    font-size: 50px;
+    color: black;
+}

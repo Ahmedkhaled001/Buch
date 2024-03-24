@@ -14,7 +14,25 @@ window.addEventListener("scroll", () =>{
     )
 });
 
+function toggleLoader(show = true)
+{
+    if(show)
+    {
+        document.getElementById("loader").style.visibility = 'visible'
+    }else {
+        document.getElementById("loader").style.visibility = 'hidden'
+    }
+}
+
 getPosts()
+getPostsPro()
+getUser()
+
+function userClicked(userId){
+    alert(userId)
+}
+
+
 function getPosts(reload = true , page = 1){
     axios.get(`${baseUrl}/posts?limit=2&page=${page}`)
     .then((response) => {
@@ -45,8 +63,8 @@ function getPosts(reload = true , page = 1){
             <div class="post d-flex justify-content-center my-4 rounded" >
                 <div class="card col-6">
                     <div class="card-header" style="display: flex; justify-content: space-between;">
-                        <div>
-                            <img src="${author.profile_image}" style="width: 40px; height: 40px;">
+                        <div onclick="userClicked(${author.id})">
+                            <img src="${author.profile_image}" style="width: 40px; height: 40px;" alt="img">
                             <span>
                                 <a href="#" class="Profile-link"><h6 style="display: inline;">${author.username}</h6></a>
                             </span>
@@ -59,7 +77,7 @@ function getPosts(reload = true , page = 1){
                     <div class="card-body shadow" onclick=(goToPost(${post.id})) style="cursor:pointer;">
                         <p class="card-text">${post.body}</p>
                         <h6 style="color: rgb(179, 179, 179); font-size: 13px;">${post.created_at}</h6>
-                        <img src="${post.image}" style="height: 300px; width: 100%;" class="col-6">
+                        <img src="${post.image}" style="height: 300px; width: 100%;" class="col-6" alt="post-img">
                         <hr>
                         <span style="font-size: 13px;">
                             <a href="#"><i class="bi bi-pen"></i></a>
@@ -94,7 +112,8 @@ let addBtn = document.getElementById("addPostBtn")
 document.getElementById("loginBtn").addEventListener("click", () => {
     const userAdd = document.getElementById("userNameInput").value
     const passAdd = document.getElementById("passwordInput").value
-
+    
+    toggleLoader(true)
     axios.post(`${baseUrl}/login`, 
     {
         "username": userAdd,
@@ -113,7 +132,14 @@ document.getElementById("loginBtn").addEventListener("click", () => {
         const modalInstance = bootstrap.Modal.getInstance(modal)
         modalInstance.hide()
 
+        getUser()
+        getPosts()
+        window.location = "index.html"
         logged()
+    }).catch((err) => console.log(err))
+
+    .finally(() => {
+        toggleLoader(false)
     })
 
 })
@@ -179,8 +205,8 @@ document.getElementById("signUpBtn").addEventListener("click", () => {
     formData.append("password", passAdd)
     formData.append("profile_image", profileImage)
 
-    axios.post(`${baseUrl}/register`, formData
-    )
+    toggleLoader(true)
+    axios.post(`${baseUrl}/register`, formData)
     .then(function (response) {
         console.log(response);
         let token = response.data.token
@@ -198,6 +224,11 @@ document.getElementById("signUpBtn").addEventListener("click", () => {
 
 
 
+    }).catch((err) => {
+        console.log(err)
+    })
+    .finally(() => {
+        toggleLoader(false)
     })
     
 
@@ -206,7 +237,6 @@ document.getElementById("signUpBtn").addEventListener("click", () => {
 // -------------------------------------------create post--------------------------------------------- //
 
 function creatPostClicked(){
-    console.log('post abroved');
     const body = document.getElementById("message-text-post").value
     const image = document.getElementById("imagePost").files[0]
     const token = localStorage.getItem('token')
@@ -250,6 +280,10 @@ function creatPostClicked(){
         alert(error.response.data.message)
     }
     )
+}
+
+function userClicked(userId){
+    window.location = `profile.html?userid=${userId}`
 }
 
 
@@ -320,8 +354,8 @@ async function viewPost(){
         <div class="post d-flex justify-content-center my-4 rounded" style=" flex-direction: column; align-items: center;" >
             <div class="card" style="width: 345px;">
                 <div class="card-header" style="display: flex; justify-content: space-between;">
-                    <div>
-                        <img src="${author.profile_image}" style="width: 40px; height: 40px;">
+                    <div onclick="userClicked()">
+                        <img src="${author.profile_image}" style="width: 40px; height: 40px; alt="img">
                         <span>
                             <a href="#" class="Profile-link"><h6 style="display: inline;">${author.username}</h6></a>
                         </span>
@@ -331,11 +365,11 @@ async function viewPost(){
                 <div class="card-body " onclick=(goToPost(${post.id})) style="cursor:pointer;">
                     <p class="card-text" id="card-text">${post.body}</p>
                     <h6 style="color: rgb(179, 179, 179); font-size: 13px;">${post.created_at}</h6>
-                    <img src="${post.image}" style="height: 300px; width: 100%;" class="col-6">
+                    <img src="${post.image}" style="height: 300px; width: 100%;" class="col-6" alt="img">
                     <hr>
                     <span style="font-size: 13px;">
                         <a href="#"><i class="bi bi-pen"></i></a>
-                        <p style="display: inline;">(${post.comments_count}) Commentes</p>
+                        <p style="display: inline;">(${post.comments_count}) Comments</p>
                     </span>
                 </div>
             </div>
@@ -461,3 +495,146 @@ function deletePostConfirmation(){
     })
 }
 // -------------------------------------------//Delete Post//--------------------------------------------- //
+
+// ------------------------------------------- Profile --------------------------------------------- //
+
+
+function getCurrentUserId()
+{
+    const urlParams = new URLSearchParams(window.location.search)
+    const id = urlParams.get("userid")
+    return id
+}
+
+function getCurrentUser(){
+    let user = null
+    const storageUser = localStorage.getItem("user")
+
+    if( storageUser != null ){
+        user = JSON.parse(storageUser)
+    }
+    console.log(user)
+    return user
+}
+
+function profileClicked(){
+    const user = getCurrentUser()
+    window.location = `profile.html?userid=${user.id}` 
+}
+
+function getUser()
+{
+
+    const id = getCurrentUserId()
+
+    toggleLoader(true)
+    axios.get(`${baseUrl}/users/${id}`)
+    .then((response) => {
+        const user = response.data.data
+        document.getElementById("main-info-email").innerHTML = user.email
+        document.getElementById("main-info-name").innerHTML = user.name
+        document.getElementById("main-info-username").innerHTML = user.username
+        document.getElementById("main-info-image").src = user.profile_image
+        document.getElementById("name-posts").innerHTML = `${user.username}'s`
+        
+
+        // posts & comments count
+        document.getElementById("posts-count").innerHTML = user.posts_count
+        document.getElementById("comments-count").innerHTML = user.comments_count
+
+    }).catch(err => {console.log(err)})
+    .finally(() => {
+        toggleLoader(false)
+    })
+    
+}
+
+function getPostsPro()
+{
+    const id = getCurrentUserId()
+    
+    toggleLoader(true)
+    axios.get(`${baseUrl}/users/${id}/posts`)
+    .then((response) => {
+        const posts = response.data.data
+        document.getElementById("user-posts").innerHTML = ""
+
+        for(post of posts)
+        {
+            
+            const author = post.author
+            let postTitle = ""
+
+            // show or hide (edit) button
+            let user = getCurrentUser()
+            let isMyPost = user != null && post.author.id == user.id
+            let editBtnContent = ``
+
+            if(isMyPost){
+                editBtnContent = 
+                `
+                    <button class='btn btn-danger' style='margin-left: 5px; float: right' onclick="deletePostBtnClicked('${encodeURIComponent(JSON.stringify(post))}')">delete</button>
+
+                    <button class='btn btn-secondary' style='float: right' onclick="editPostBtnClicked('${encodeURIComponent(JSON.stringify(post))}')">edit</button>
+                `
+            }
+
+            if(post.title != null)
+            {
+                postTitle = post.title
+            }
+            let content = `
+                <div class="card shadow">
+                    <div class="card-header">
+                        <img class="rounded-circle border border-2" src="${author.profile_image}" alt="img" style="width: 40px; height: 40px">
+                        <b>${author.username}</b>
+
+                        ${editBtnContent}
+                        
+                    </div>
+                    <div class="card-body" onclick="postClicked(${post.id})" style="cursor: pointer">
+                        <img class="w-100" src="${post.image}" alt="post-img">
+
+                        <h6 style="color: rgb(193, 193, 193);" class="mt-1">
+                            ${post.created_at}
+                        </h6>
+
+                        <h5>
+                            ${postTitle}
+                        </h5>
+
+                        <p>
+                            ${post.body}
+                        </p>
+
+                        <hr>
+
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+                            </svg>
+
+                            <span onclick="goToPost(${post.id})">
+                                (${post.comments_count}) Comments
+
+                                <span id="post-tags-${post.id}">
+                                
+                                </span>
+                            </span>
+                            
+                        </div>
+                    </div>
+                </div>
+            `
+
+            document.getElementById("user-posts").innerHTML += content
+        }
+    }).catch((err) => {
+        console.log(err)
+    }).finally(() => {
+        toggleLoader(false)
+    })
+
+}
+
+// -------------------------------------------// Profile //--------------------------------------------- //

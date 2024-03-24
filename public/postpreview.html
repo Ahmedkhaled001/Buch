@@ -15,6 +15,39 @@
     
 
 
+            <!-- ======= LOADER ======== -->
+    <div
+    id="loader"
+    style="
+      background: rgba(128, 128, 128, 0.495);
+      position: fixed;
+      top: 0px;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      margin: auto auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+    "
+  >
+    <div class="lds-roller">
+      <div style="color: white; font-size: large; font-weight: 500;">Loading ...</div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  <!-- =======// LOADER //======== -->
+  
         <!-- ---------------------Login------------------------------------------->
         <div
         class="modal fade"
@@ -170,7 +203,7 @@
       <div class="container">
         <nav class="navbar navbar-expand-lg bg-body-tertiary shadow rounded">
           <div class="container-fluid" style="gap: 10px;">
-            <a class="navbar-brand" href="index.html"><i class="bi bi-asterisk"></i></a>
+            <a class="navbar-brand" href="index.html">Buch</a>
             <button
               class="navbar-toggler"
               type="button"
@@ -192,9 +225,14 @@
                     >Home</a
                   >
                 </li>
-                <!-- <li class="nav-item">
-                  <a class="nav-link" href="#">Profile</a>
-                </li> -->
+                <li>
+                <a
+                class="nav-link active text-bg-success rounded"
+                style="cursor: pointer;"
+                aria-current="page"
+                onclick="profileClicked()"
+                >Profile</a>
+              </li>
               </ul>
               <div class="d-flex justify-content-end w-100">
                 <button
