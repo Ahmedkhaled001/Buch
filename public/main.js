@@ -214,7 +214,7 @@ document.getElementById("signUpBtn").addEventListener("click", () => {
         let user = response.data.user
         localStorage.setItem("token", token)
         localStorage.setItem("user", JSON.stringify(user))
-        console.log("token received" , token);
+        window.location.reload()
 
         //To Close Modal when Click Login
         const modal = document.getElementById("signUpModal")
@@ -298,9 +298,6 @@ function getCurruntUser(){
     return user
 }
 
-function changehandle(){
-    console.log("adsadasdsad")
-}
 
 // -------------------------------------------view post--------------------------------------------- //
 viewPost()
@@ -446,9 +443,6 @@ function updatePostClicked(){
 
     formData.append("_method","put" )
 
-    // const params = {
-    //     "body": body
-    // }
 
 
     const headers = {
@@ -464,6 +458,7 @@ function updatePostClicked(){
         const modalInstance = bootstrap.Modal.getInstance(modal)
         modalInstance.hide()
         getPosts()
+        window.location.reload()
     })
 }
 
@@ -514,7 +509,6 @@ function getCurrentUser(){
     if( storageUser != null ){
         user = JSON.parse(storageUser)
     }
-    console.log(user)
     return user
 }
 
