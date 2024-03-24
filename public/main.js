@@ -135,6 +135,7 @@ document.getElementById("loginBtn").addEventListener("click", () => {
         getUser()
         getPosts()
         window.location = "index.html"
+        window.location.reload()
         logged()
     }).catch((err) => console.log(err))
 
