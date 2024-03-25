@@ -131,14 +131,17 @@ document.getElementById("loginBtn").addEventListener("click", () => {
         const modal = document.getElementById("exampleModal")
         const modalInstance = bootstrap.Modal.getInstance(modal)
         modalInstance.hide()
-
         getUser()
         getPosts()
         window.location = "index.html"
         window.location.reload()
         logged()
-    }).catch((err) => console.log(err))
-
+        showAlert("Logged in successfully", "success")
+    }).catch((error) => {
+        const message = error.response.data.message
+        showAlert(message, "danger")
+    })
+    
     .finally(() => {
         toggleLoader(false)
     })
@@ -225,8 +228,9 @@ document.getElementById("signUpBtn").addEventListener("click", () => {
 
 
 
-    }).catch((err) => {
-        console.log(err)
+    }).catch((error) => {
+        const message = error.response.data.message
+        showAlert(message, "danger")
     })
     .finally(() => {
         toggleLoader(false)
@@ -274,11 +278,13 @@ function creatPostClicked(){
         const modal = document.getElementById("createPostModal")
         const modalInstance = bootstrap.Modal.getInstance(modal)
         modalInstance.hide()
-
         getPosts()
+        showAlert("posted is successfully", "success")
+        window.location.reload()
     })
     .catch( (error) =>{
-        alert(error.response.data.message)
+        const message = error.response.data.message
+        showAlert(message, "danger")
     }
     )
 }
@@ -409,8 +415,9 @@ function addCommentN(){
         const commView = commAuthor.body
         viewPost()
     
-    }).catch((err) => {
-        alert(err.response.data.message)
+    }).catch((error) => {
+        const message = error.response.data.message
+        showAlert(message, "danger")
     })
 }
 // -------------------------------------------//add Comments//--------------------------------------------- //
@@ -459,6 +466,9 @@ function updatePostClicked(){
         modalInstance.hide()
         getPosts()
         window.location.reload()
+    }).catch(error => {
+        const message = error.response.data.message
+        showAlert(message, "danger")
     })
 }
 
@@ -488,6 +498,7 @@ function deletePostConfirmation(){
         const modalInstance = bootstrap.Modal.getInstance(modal)
         modalInstance.hide()
         getPosts()
+        window.location.reload()
     })
 }
 // -------------------------------------------//Delete Post//--------------------------------------------- //
@@ -537,7 +548,8 @@ function getUser()
         document.getElementById("posts-count").innerHTML = user.posts_count
         document.getElementById("comments-count").innerHTML = user.comments_count
 
-    }).catch(err => {console.log(err)})
+    }).catch(error => { const message = error.response.data.message
+        showAlert(message, "danger")})
     .finally(() => {
         toggleLoader(false)
     })
@@ -624,8 +636,9 @@ function getPostsPro()
 
             document.getElementById("user-posts").innerHTML += content
         }
-    }).catch((err) => {
-        console.log(err)
+    }).catch((error) => {
+        const message = error.response.data.message
+        showAlert(message, "danger")
     }).finally(() => {
         toggleLoader(false)
     })
@@ -633,3 +646,39 @@ function getPostsPro()
 }
 
 // -------------------------------------------// Profile //--------------------------------------------- //
+
+
+
+// ------------------------------------ Error or Success Alerts ------------------------------ //
+function showAlert(customMessage, type="success")
+{
+    const alertPlaceholder = document.getElementById('success-alert')
+
+    const alert = (message, type) => {
+        const wrapper = document.createElement('div')
+        wrapper.innerHTML = [
+            `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+            `   <div>${message}</div>`,
+            '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+            '</div>'
+        ].join('')
+
+        alertPlaceholder.append(wrapper)
+    }
+
+    alert(customMessage, type) 
+    
+    // todo: hide the alert
+    setTimeout(() => {
+        const alertToHide = bootstrap.Alert.getOrCreateInstance('#success-alert')
+        
+        document.getElementById("success-alert").hide();
+
+        const alert = document.getElementById("success-alert")
+        const modalAlert = bootstrap.Alert.getInstance(alert)
+        modalAlert.hide()
+    }, 2000);
+    
+    
+}
+// ----------------------------------// Error or Success Alerts //------------------------------- //
